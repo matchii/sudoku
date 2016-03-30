@@ -16,6 +16,8 @@ var cases_removeValue = []testCase{
 	{intSlice{1}, 2, 1},
 	{intSlice{1, 2}, 1, 1},
 	{intSlice{1, 2}, 3, 2},
+	{intSlice{4, 4}, 4, 0},
+	{intSlice{5, 6, 6}, 6, 1},
 }
 
 func TestRemovingValue(t *testing.T) {

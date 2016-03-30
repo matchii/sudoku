@@ -8,11 +8,13 @@ import (
 type intSlice []int
 
 func (slice intSlice) removeValue(value int) intSlice {
-	index := slice.indexOf(value)
-	if (index < 0) {
-		return slice
+	for {
+		index := slice.indexOf(value)
+		if (index < 0) {
+			return slice
+		}
+		slice = append(slice[:index], slice[index+1:]...)
 	}
-	return append(slice[:index], slice[index+1:]...)
 }
 
 func (slice intSlice) indexOf(value int) int {
