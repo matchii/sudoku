@@ -6,6 +6,7 @@ type board struct {
 
 func main() {
 	b := NewBoard()
+	b.Fill()
 	b.Print()
 }
 
@@ -15,6 +16,5 @@ func NewBoard() board {
 		data[i]  = make([]int, 9)
 	}
 	b := board{data}
-	b.Fill()
 	return b
 }
