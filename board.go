@@ -1,19 +1,30 @@
 package main
 
 import (
+	"fmt"
 	tm "github.com/buger/goterm"
 )
 
 func (b *board) Fill() {
-	var available = intSlice{1, 2, 3, 4, 5, 6, 7, 8, 9}
-	var current int
 	for i := 0; i <= 0; i++ {
 		for j := 0; j <= 8; j++ {
-			current = available.randomDigit()
-			b.data[i][j] = current
-			available = available.removeValue(current)
+			b.data[i][j] = b.GetAvailable(i, j).randomDigit()
 		}
 	}
+}
+
+func (b *board) GetAvailable(row int, col int) intSlice {
+	tmp := intSlice{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	for x := 0; x <= 8; x++ {
+		tmp = tmp.removeValue(b.data[row][x])
+	}
+	for y := 0; y <= 8; y++ {
+		tmp = tmp.removeValue(b.data[y][col])
+	}
+	if (len(tmp) == 0) {
+		panic(fmt.Sprintf("No digit available at x=%d y=%d", col, row))
+	}
+	return tmp
 }
 
 func (b *board) Print() {
