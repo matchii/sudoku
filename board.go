@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	tm "github.com/buger/goterm"
 )
 
@@ -13,16 +12,24 @@ func (b *board) Fill() {
 	}
 }
 
+// GetAvailable returns slice of digits that can be inserted at given position.
 func (b *board) GetAvailable(row int, col int) intSlice {
 	tmp := intSlice{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	// row
 	for x := 0; x <= 8; x++ {
 		tmp = tmp.removeValue(b.data[row][x])
 	}
+	// column
 	for y := 0; y <= 8; y++ {
 		tmp = tmp.removeValue(b.data[y][col])
 	}
-	if (len(tmp) == 0) {
-		panic(fmt.Sprintf("No digit available at x=%d y=%d", col, row))
+	// block
+	blockFirstRow := row / 3 * 3
+	blockFirstCol := col / 3 * 3
+	for i := blockFirstRow; i <= blockFirstRow+2; i++ {
+		for j := blockFirstCol; j <= blockFirstCol+2; j++ {
+			tmp = tmp.removeValue(b.data[i][j])
+		}
 	}
 	return tmp
 }
