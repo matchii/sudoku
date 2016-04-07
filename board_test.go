@@ -38,3 +38,40 @@ func TestGetAvailable(t *testing.T) {
 		IntSlicesEqual(b.GetAvailable(0, 0), intSlice{5, 8, 9}),
 		"C7: All but 1, 2, 3, 4, 5, 6, 7 should be available")
 }
+
+func TestGetNextEmpty(t *testing.T) {
+	b := NewBoard()
+	var row, col int
+	// empty board, expect 0, 0
+	row, col = b.GetNextEmpty()
+	assert.Equal(t, 0, row)
+	assert.Equal(t, 0, col)
+	// get next from first row
+	b.data[0][0] = 1
+	row, col = b.GetNextEmpty()
+	assert.Equal(t, 0, row)
+	assert.Equal(t, 1, col)
+	// ignore this, it is in second row and first still has empty cells
+	b.data[1][0] = 1
+	row, col = b.GetNextEmpty()
+	assert.Equal(t, 0, row)
+	assert.Equal(t, 1, col)
+	// fill entire first row
+	for i := 1; i <= 8; i++ {
+		b.data[0][i] = i
+	}
+	// should return first empty from second row (1, 1)
+	row, col = b.GetNextEmpty()
+	assert.Equal(t, 1, row)
+	assert.Equal(t, 1, col)
+	// fill everything
+	for r := 1; r <= 8; r++ {
+		for c := 0; c <= 8; c++ {
+			b.data[r][c] = 1
+		}
+	}
+	// board filled, expect -1, -1
+	row, col = b.GetNextEmpty()
+	assert.Equal(t, -1, row)
+	assert.Equal(t, -1, col)
+}

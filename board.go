@@ -34,6 +34,19 @@ func (b *board) GetAvailable(row int, col int) intSlice {
 	return tmp
 }
 
+// GetNextEmpty returns index (row, col) of the first empty cell,
+// or (-1, -1) if all cells are filled.
+func (b *board) GetNextEmpty() (int, int) {
+	for rowIdx, row := range b.data {
+		for colIdx := range row {
+			if b.data[rowIdx][colIdx] == 0 {
+				return rowIdx, colIdx
+			}
+		}
+	}
+	return -1, -1
+}
+
 func (b *board) Print() {
 	tm.Clear()
 	tm.MoveCursor(1, 1)
