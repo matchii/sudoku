@@ -75,3 +75,18 @@ func TestGetNextEmpty(t *testing.T) {
 	assert.Equal(t, -1, row)
 	assert.Equal(t, -1, col)
 }
+
+func TestGetPreviousCell(t *testing.T) {
+	b := NewBoard()
+	var row, col int
+
+	row, col = b.GetPreviousCell(0, 0)
+	assert.Equal(t, -1, row)
+	assert.Equal(t, -1, col)
+	row, col = b.GetPreviousCell(0, 5)
+	assert.Equal(t, 0, row)
+	assert.Equal(t, 4, col)
+	row, col = b.GetPreviousCell(8, 0)
+	assert.Equal(t, 7, row)
+	assert.Equal(t, 8, col)
+}

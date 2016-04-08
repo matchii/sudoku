@@ -4,11 +4,33 @@ import (
 	tm "github.com/buger/goterm"
 )
 
-func (b *board) Fill() {
-	for i := 0; i <= 0; i++ {
-		for j := 0; j <= 8; j++ {
-			b.data[i][j] = b.GetAvailable(i, j).randomDigit()
+func (b *board) Fill() bool {
+	var digits intSlice
+	var digit, prevRow, prevCol, row, col, i int
+	var mug [][]intSlice
+	mug = make([][]intSlice, 9)
+	for i := 0; i <= 8; i++ {
+		mug[i] = make([]intSlice, 9)
+	}
+	for {
+		row, col = b.GetNextEmpty()
+		if row == -1 {
+			return true // no empty cells, done
 		}
+		digits = b.GetAvailable(row, col)
+		for value := range mug[row][col] {
+			digits = digits.removeValue(value)
+		}
+		if len(digits) < 1 {
+			prevRow, prevCol = b.GetPreviousCell(row, col)
+			mug[prevRow][prevCol] = append(mug[prevRow][prevCol], b.data[prevRow][prevCol])
+			b.data[prevRow][prevCol] = 0
+			mug[row][col] = intSlice{}
+			continue
+		}
+		digit = digits.randomDigit()
+		b.data[row][col] = digit
+		i++
 	}
 }
 
@@ -47,12 +69,29 @@ func (b *board) GetNextEmpty() (int, int) {
 	return -1, -1
 }
 
+func (b *board) GetPreviousCell(row, col int) (int, int) {
+	if row == 0 && col == 0 {
+		return -1, -1
+	}
+	if col > 0 {
+		return row, col-1
+	}
+	return row-1, 8
+}
+
 func (b *board) Print() {
 	tm.Clear()
 	tm.MoveCursor(1, 1)
 	for l, line := range b.data {
+		if l % 3 == 0 {
+			tm.Println()
+		}
 		for c, _ := range line {
-			tm.Printf(" %d", b.data[l][c])
+			if c % 3 == 0 {
+				tm.Printf("  %d", b.data[l][c])
+			} else {
+				tm.Printf(" %d", b.data[l][c])
+			}
 		}
 		tm.Println()
 	}
