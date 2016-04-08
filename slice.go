@@ -7,18 +7,19 @@ import (
 
 type intSlice []int
 
-func (slice intSlice) removeValue(value int) intSlice {
+func (s *intSlice) removeValue(value int) {
 	for {
-		index := slice.indexOf(value)
+		index := s.indexOf(value)
 		if (index < 0) {
-			return slice
+			return
 		}
-		slice = append(slice[:index], slice[index+1:]...)
+		tmp := *s
+		*s = append(tmp[:index], tmp[index+1:]...)
 	}
 }
 
-func (slice intSlice) indexOf(value int) int {
-	for i, v := range slice {
+func (s *intSlice) indexOf(value int) int {
+	for i, v := range *s {
         if (v == value) {
             return i
         }
@@ -26,28 +27,29 @@ func (slice intSlice) indexOf(value int) int {
     return -1
 }
 
-func (slice intSlice) randomDigit() int {
+func (s *intSlice) randomDigit() int {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	return slice[r.Intn(len(slice))]
+	return (*s)[r.Intn(len(*s))]
 }
 
-func (slice intSlice) sum() int {
+func (s *intSlice) sum() int {
 	var sum int
-	for _, v := range slice {
+	for _, v := range *s {
 		sum += v
 	}
 	return sum
 }
 
-func (slice intSlice) contains(element int) bool {
-	return slice.indexOf(element) > -1
+func (s *intSlice) contains(element int) bool {
+	return s.indexOf(element) > -1
 }
 
 // IntSlicesEquals checks if slices have the same unique digits, excluding 0.
 // I will not make it a method, this way it can be called on board.data[index] directly.
+// Parameters are passed by value on purpose.
 func IntSlicesEqual(first intSlice, second intSlice) bool {
-	first = first.removeValue(0)
-	second = second.removeValue(0)
+	first.removeValue(0)
+	second.removeValue(0)
 	if (first.sum() != second.sum()) {
 		return false
 	}

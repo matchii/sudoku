@@ -22,12 +22,12 @@ var cases_removeValue = []testCase{
 
 func TestRemovingValue(t *testing.T) {
 	for caseIndex, caseData := range cases_removeValue {
-		result := caseData.slice.removeValue(caseData.value)
-		if len(result) != caseData.expected {
-			t.Errorf("Case #%d, expected length %s, got %s", caseIndex, caseData.expected, result)
+		caseData.slice.removeValue(caseData.value)
+		if len(caseData.slice) != caseData.expected {
+			t.Errorf("Case #%d, expected length %d, got %d", caseIndex, caseData.expected, len(caseData.slice))
 		}
-		if result.indexOf(caseData.value) > -1 {
-			t.Errorf("Case #%d, value %d was not removed from slice (%s)", caseIndex, caseData.value, result)
+		if caseData.slice.indexOf(caseData.value) > -1 {
+			t.Errorf("Case #%d, value %d was not removed from slice (%s)", caseIndex, caseData.value, caseData.slice)
 		}
 	}
 }

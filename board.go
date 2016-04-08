@@ -27,7 +27,7 @@ func (b *board) Fill() bool {
 		}
 		digits = b.GetAvailable(row, col)
 		for value := range mug[row][col] {
-			digits = digits.removeValue(value)
+			digits.removeValue(value)
 		}
 		if len(digits) < 1 {
 			prevRow, prevCol = b.GetPreviousCell(row, col)
@@ -47,18 +47,18 @@ func (b *board) GetAvailable(row int, col int) intSlice {
 	tmp := intSlice{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	// row
 	for x := 0; x <= 8; x++ {
-		tmp = tmp.removeValue(b.data[row][x])
+		tmp.removeValue(b.data[row][x])
 	}
 	// column
 	for y := 0; y <= 8; y++ {
-		tmp = tmp.removeValue(b.data[y][col])
+		tmp.removeValue(b.data[y][col])
 	}
 	// block
 	blockFirstRow := row / 3 * 3
 	blockFirstCol := col / 3 * 3
 	for i := blockFirstRow; i <= blockFirstRow+2; i++ {
 		for j := blockFirstCol; j <= blockFirstCol+2; j++ {
-			tmp = tmp.removeValue(b.data[i][j])
+			tmp.removeValue(b.data[i][j])
 		}
 	}
 	return tmp
