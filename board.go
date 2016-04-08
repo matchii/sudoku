@@ -4,9 +4,17 @@ import (
 	tm "github.com/buger/goterm"
 )
 
+type board struct {
+	// Digits in cells
+	data [][]int
+
+	// In how many iterations board was filled
+	iterations int
+}
+
 func (b *board) Fill() bool {
 	var digits intSlice
-	var digit, prevRow, prevCol, row, col, i int
+	var digit, prevRow, prevCol, row, col int
 	var mug [][]intSlice
 	mug = make([][]intSlice, 9)
 	for i := 0; i <= 8; i++ {
@@ -30,7 +38,7 @@ func (b *board) Fill() bool {
 		}
 		digit = digits.randomDigit()
 		b.data[row][col] = digit
-		i++
+		b.iterations++
 	}
 }
 
@@ -95,5 +103,7 @@ func (b *board) Print() {
 		}
 		tm.Println()
 	}
+	tm.Println()
+	tm.Printf("Board generated in %d iterations", b.iterations)
 	tm.Flush()
 }

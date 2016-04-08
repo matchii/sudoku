@@ -1,9 +1,5 @@
 package main
 
-type board struct {
-	data [][]int
-}
-
 func main() {
 	b := NewBoard()
 	b.Fill()
@@ -15,6 +11,6 @@ func NewBoard() board {
 	for i := 0; i <= 8; i++ {
 		data[i]  = make([]int, 9)
 	}
-	b := board{data}
+	b := board{data, 0}
 	return b
 }
