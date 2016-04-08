@@ -1,16 +1,23 @@
 package main
 
 import (
+	"github.com/stvp/assert"
 	"testing"
 )
 
-type testCase struct {
+type TestCaseInt struct {
 	slice	 intSlice
 	value	 int
 	expected int
 }
 
-var cases_removeValue = []testCase{
+type TestCaseBool struct {
+	slice	 intSlice
+	value	 int
+	expected bool
+}
+
+var cases_removeValue = []TestCaseInt{
 	{intSlice{}, 1, 0},
 	{intSlice{5}, 5, 0},
 	{intSlice{1}, 2, 1},
@@ -21,18 +28,14 @@ var cases_removeValue = []testCase{
 }
 
 func TestRemovingValue(t *testing.T) {
-	for caseIndex, caseData := range cases_removeValue {
-		caseData.slice.removeValue(caseData.value)
-		if len(caseData.slice) != caseData.expected {
-			t.Errorf("Case #%d, expected length %d, got %d", caseIndex, caseData.expected, len(caseData.slice))
-		}
-		if caseData.slice.indexOf(caseData.value) > -1 {
-			t.Errorf("Case #%d, value %d was not removed from slice (%s)", caseIndex, caseData.value, caseData.slice)
-		}
+	for _, data := range cases_removeValue {
+		data.slice.removeValue(data.value)
+		assert.False(t, len(data.slice) != data.expected)
+		assert.False(t, data.slice.indexOf(data.value) > -1)
 	}
 }
 
-var cases_indexOf = []testCase{
+var cases_indexOf = []TestCaseInt{
 	{intSlice{}, 1, -1},
 	{intSlice{1}, 1, 0},
 	{intSlice{1, 2}, 1, 0},
@@ -42,20 +45,43 @@ var cases_indexOf = []testCase{
 }
 
 func TestGettingIndex(t *testing.T) {
-	for index, data := range cases_indexOf {
-		result := data.slice.indexOf(data.value)
-		if result != data.expected {
-			t.Errorf("Case #%d, expected %d, got %d", index, data.expected, result)
-		}
+	for _, data := range cases_indexOf {
+		assert.Equal(t, data.expected, data.slice.indexOf(data.value))
+	}
+}
+
+var cases_sum = []TestCaseInt{
+	{intSlice{}, 0, 0},
+	{intSlice{0}, 0, 0},
+	{intSlice{1}, 0, 1},
+	{intSlice{1, 2, 3}, 0, 6},
+	{intSlice{4, 4, 4}, 0, 12},
+}
+
+func TestSum(t *testing.T) {
+	for _, data := range cases_sum {
+		assert.Equal(t, data.expected, data.slice.sum())
+	}
+}
+
+var cases_contains = []TestCaseBool{
+	{intSlice{}, 1, false},
+	{intSlice{1}, 1, true},
+	{intSlice{1}, 2, false},
+	{intSlice{1, 1}, 1, true},
+	{intSlice{1, 1}, 2, false},
+	{intSlice{1, 2, 3}, 2, true},
+}
+
+func TestContains(t *testing.T) {
+	for _, data := range cases_contains {
+		assert.Equal(t, data.expected, data.slice.contains(data.value))
 	}
 }
 
 func TestRandomDigit(t *testing.T) {
 	slice := intSlice{1, 2, 7, 8}
 	for i := 0; i < 100; i++ {
-		result := slice.randomDigit()
-		if slice.indexOf(result) < 0 {
-			t.Errorf("Value from outside of slice was generated: %d", result)
-		}
+		assert.False(t, slice.indexOf(slice.randomDigit()) < 0)
 	}
 }
