@@ -39,21 +39,21 @@ func TestGetAvailable(t *testing.T) {
 		"C7: All but 1, 2, 3, 4, 5, 6, 7 should be available")
 }
 
-func TestGetNextEmpty(t *testing.T) {
+func TestGetNextEmptyCell(t *testing.T) {
 	b := NewBoard()
 	var row, col int
 	// empty board, expect 0, 0
-	row, col = b.GetNextEmpty()
+	row, col = b.GetNextEmptyCell()
 	assert.Equal(t, 0, row)
 	assert.Equal(t, 0, col)
 	// get next from first row
 	b.data[0][0] = 1
-	row, col = b.GetNextEmpty()
+	row, col = b.GetNextEmptyCell()
 	assert.Equal(t, 0, row)
 	assert.Equal(t, 1, col)
 	// ignore this, it is in second row and first still has empty cells
 	b.data[1][0] = 1
-	row, col = b.GetNextEmpty()
+	row, col = b.GetNextEmptyCell()
 	assert.Equal(t, 0, row)
 	assert.Equal(t, 1, col)
 	// fill entire first row
@@ -61,7 +61,7 @@ func TestGetNextEmpty(t *testing.T) {
 		b.data[0][i] = i
 	}
 	// should return first empty from second row (1, 1)
-	row, col = b.GetNextEmpty()
+	row, col = b.GetNextEmptyCell()
 	assert.Equal(t, 1, row)
 	assert.Equal(t, 1, col)
 	// fill everything
@@ -71,7 +71,7 @@ func TestGetNextEmpty(t *testing.T) {
 		}
 	}
 	// board filled, expect -1, -1
-	row, col = b.GetNextEmpty()
+	row, col = b.GetNextEmptyCell()
 	assert.Equal(t, -1, row)
 	assert.Equal(t, -1, col)
 }
@@ -89,4 +89,17 @@ func TestGetPreviousCell(t *testing.T) {
 	row, col = b.GetPreviousCell(8, 0)
 	assert.Equal(t, 7, row)
 	assert.Equal(t, 8, col)
+}
+
+func TestEmpty(t *testing.T) {
+	b := NewBoard()
+	b.data[0][0] = 1
+	b.data[2][2] = 1
+	b.data[5][5] = 1
+	b.data[7][7] = 1
+	b.Empty()
+	assert.Equal(t, 0, b.data[0][0])
+	assert.Equal(t, 0, b.data[2][2])
+	assert.Equal(t, 0, b.data[5][5])
+	assert.Equal(t, 0, b.data[7][7])
 }

@@ -4,6 +4,9 @@ import (
 	tm "github.com/buger/goterm"
 )
 
+// Reset execution after this number of iterations is reached
+const ITERATIONS_LIMIT int = 1000000
+
 type board struct {
 	// Digits in cells
 	data [][]int
@@ -21,7 +24,7 @@ func (b *board) Fill() bool {
 		mug[i] = make([]intSlice, 9)
 	}
 	for {
-		row, col = b.GetNextEmpty()
+		row, col = b.GetNextEmptyCell()
 		if row == -1 {
 			return true // no empty cells, done
 		}
@@ -39,6 +42,9 @@ func (b *board) Fill() bool {
 		digit = digits.randomDigit()
 		b.data[row][col] = digit
 		b.iterations++
+		if b.iterations > ITERATIONS_LIMIT {
+			b.Empty()
+		}
 	}
 }
 
@@ -64,9 +70,9 @@ func (b *board) GetAvailable(row int, col int) intSlice {
 	return tmp
 }
 
-// GetNextEmpty returns index (row, col) of the first empty cell,
+// GetNextEmptyCell returns index (row, col) of the first empty cell,
 // or (-1, -1) if all cells are filled.
-func (b *board) GetNextEmpty() (int, int) {
+func (b *board) GetNextEmptyCell() (int, int) {
 	for rowIdx, row := range b.data {
 		for colIdx := range row {
 			if b.data[rowIdx][colIdx] == 0 {
@@ -85,6 +91,14 @@ func (b *board) GetPreviousCell(row, col int) (int, int) {
 		return row, col-1
 	}
 	return row-1, 8
+}
+
+func (b *board) Empty() {
+	for r, row := range b.data {
+		for c := range row {
+			b.data[r][c] = 0
+		}
+	}
 }
 
 func (b *board) Print() {
