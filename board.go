@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
 	tm "github.com/buger/goterm"
 )
 
@@ -17,35 +21,43 @@ type board struct {
 
 func (b *board) Fill() bool {
 	var digits intSlice
-	var digit, prevRow, prevCol, row, col int
-	var mug [][]intSlice
-	mug = make([][]intSlice, 9)
-	for i := 0; i <= 8; i++ {
-		mug[i] = make([]intSlice, 9)
-	}
+	var prevRow, prevCol, row, col int
+	mug := BuildMug()
 	for {
 		row, col = b.GetNextEmptyCell()
 		if row == -1 {
 			return true // no empty cells, done
 		}
+		// build list of legal digits for current cell
 		digits = b.GetAvailable(row, col)
+		// remove from it digits previously tried
 		for value := range mug[row][col] {
 			digits.removeValue(value)
 		}
+		// if no digit is legal, go back to previous cell and try fill it with other (legal) digit
 		if len(digits) < 1 {
 			prevRow, prevCol = b.GetPreviousCell(row, col)
 			mug[prevRow][prevCol] = append(mug[prevRow][prevCol], b.data[prevRow][prevCol])
 			b.data[prevRow][prevCol] = 0
+			// empty mug for current cell, as values remembered here were valid
+			// only for previous value of preceding cell
 			mug[row][col] = intSlice{}
 			continue
 		}
-		digit = digits.randomDigit()
-		b.data[row][col] = digit
+		b.data[row][col] = digits.randomDigit()
 		b.iterations++
 		if b.iterations > ITERATIONS_LIMIT {
 			b.Empty()
 		}
 	}
+}
+
+func BuildMug() [][]intSlice {
+	mug := make([][]intSlice, 9)
+	for i := 0; i <= 8; i++ {
+		mug[i] = make([]intSlice, 9)
+	}
+	return mug
 }
 
 // GetAvailable returns slice of digits that can be inserted at given position.
@@ -120,4 +132,27 @@ func (b *board) Print() {
 	tm.Println()
 	tm.Printf("Board generated in %d iterations", b.iterations)
 	tm.Flush()
+}
+
+// GetAsString returns board as 81-chars long string of digits
+func (b *board) GetAsString() string {
+	var result [81]string
+	for rIndex, row := range b.data {
+		for cIndex, value := range row {
+			result[9 * rIndex + cIndex] = strconv.Itoa(value)
+		}
+	}
+	return fmt.Sprintf("%s", strings.Join(result[:], ""))
+}
+
+// WriteBoardsToFile saves given number of boards in file as 81-chars long strings
+func (b *board) WriteBoardsToFile(n int, filename string) {
+	file, _ := os.Create(filename)
+	defer file.Close()
+	for i := 0; i < n; i++ {
+		b.Fill()
+		file.WriteString(fmt.Sprintf("%s\n", b.GetAsString()))
+		b.Empty()
+	}
+	file.Sync()
 }
