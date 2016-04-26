@@ -1,9 +1,34 @@
 package main
 
+import (
+	"fmt"
+	"os"
+	"strconv"
+)
+
+// Parameters are:
+//	- number of boards to generate
+//	- file to store them, default "sudoku.txt"
+//
+// If called without parameters, print one board and exit.
 func main() {
 	b := NewBoard()
-	b.Fill()
-	b.Print()
+	var number int
+	var filename string
+	if len(os.Args) > 1 {
+		number, _ = strconv.Atoi(os.Args[1])
+	} else {
+		b.Fill()
+		b.Print()
+		os.Exit(0)
+	}
+	if len(os.Args) > 2 {
+		filename = os.Args[2]
+	} else {
+		filename = "sudoku.txt"
+	}
+	b.WriteBoardsToFile(number, filename)
+	fmt.Printf("%d board(s) generated and stored in file %s\n", number, filename)
 }
 
 func NewBoard() board {
