@@ -28,7 +28,7 @@ func main() {
 		filename = "sudoku.txt"
 	}
 	b.WriteBoardsToFile(number, filename)
-	fmt.Printf("%d board(s) generated and stored in file %s\n", number, filename)
+	fmt.Printf("\n%d board(s) generated and stored in file %s\n", number, filename)
 }
 
 func NewBoard() board {
@@ -36,6 +36,6 @@ func NewBoard() board {
 	for i := 0; i <= 8; i++ {
 		data[i]  = make([]int, 9)
 	}
-	b := board{data, 0}
+	b := board{data, nil, 0}
 	return b
 }

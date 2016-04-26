@@ -15,6 +15,9 @@ type board struct {
 	// Digits in cells
 	data [][]int
 
+	// Storage for temporarly used digits
+	mug [][]intSlice
+
 	// In how many iterations board was filled
 	iterations int
 }
@@ -22,7 +25,7 @@ type board struct {
 func (b *board) Fill() bool {
 	var digits intSlice
 	var prevRow, prevCol, row, col int
-	mug := BuildMug()
+	b.mug = BuildMug()
 	for {
 		row, col = b.GetNextEmptyCell()
 		if row == -1 {
@@ -31,22 +34,23 @@ func (b *board) Fill() bool {
 		// build list of legal digits for current cell
 		digits = b.GetAvailable(row, col)
 		// remove from it digits previously tried
-		for value := range mug[row][col] {
+		for value := range b.mug[row][col] {
 			digits.removeValue(value)
 		}
 		// if no digit is legal, go back to previous cell and try fill it with other (legal) digit
 		if len(digits) < 1 {
 			prevRow, prevCol = b.GetPreviousCell(row, col)
-			mug[prevRow][prevCol] = append(mug[prevRow][prevCol], b.data[prevRow][prevCol])
+			b.mug[prevRow][prevCol] = append(b.mug[prevRow][prevCol], b.data[prevRow][prevCol])
 			b.data[prevRow][prevCol] = 0
 			// empty mug for current cell, as values remembered here were valid
 			// only for previous value of preceding cell
-			mug[row][col] = intSlice{}
+			b.mug[row][col] = intSlice{}
 			continue
 		}
 		b.data[row][col] = digits.randomDigit()
 		b.iterations++
 		if b.iterations > ITERATIONS_LIMIT {
+			fmt.Printf(".")
 			b.Empty()
 		}
 	}
@@ -106,9 +110,11 @@ func (b *board) GetPreviousCell(row, col int) (int, int) {
 }
 
 func (b *board) Empty() {
+	b.iterations = 0
 	for r, row := range b.data {
 		for c := range row {
 			b.data[r][c] = 0
+			b.mug[r][c] = intSlice{}
 		}
 	}
 }
@@ -152,6 +158,7 @@ func (b *board) WriteBoardsToFile(n int, filename string) {
 	for i := 0; i < n; i++ {
 		b.Fill()
 		file.WriteString(fmt.Sprintf("%s\n", b.GetAsString()))
+		fmt.Printf("|")
 		b.Empty()
 	}
 	file.Sync()
