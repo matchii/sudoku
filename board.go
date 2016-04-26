@@ -22,12 +22,11 @@ type board struct {
 	iterations int
 }
 
-func (b *board) Fill() bool {
+func (b *board) FillRandom() bool {
 	var digits intSlice
 	var prevRow, prevCol, row, col int
-	b.mug = BuildMug()
 	for {
-		row, col = b.GetNextEmptyCell()
+		row, col = b.GetNextResetCell()
 		if row == -1 {
 			return true // no empty cells, done
 		}
@@ -51,17 +50,9 @@ func (b *board) Fill() bool {
 		b.iterations++
 		if b.iterations > ITERATIONS_LIMIT {
 			fmt.Printf(".")
-			b.Empty()
+			b.Reset()
 		}
 	}
-}
-
-func BuildMug() [][]intSlice {
-	mug := make([][]intSlice, 9)
-	for i := 0; i <= 8; i++ {
-		mug[i] = make([]intSlice, 9)
-	}
-	return mug
 }
 
 // GetAvailable returns slice of digits that can be inserted at given position.
@@ -86,9 +77,9 @@ func (b *board) GetAvailable(row int, col int) intSlice {
 	return tmp
 }
 
-// GetNextEmptyCell returns index (row, col) of the first empty cell,
+// GetNextResetCell returns index (row, col) of the first empty cell,
 // or (-1, -1) if all cells are filled.
-func (b *board) GetNextEmptyCell() (int, int) {
+func (b *board) GetNextResetCell() (int, int) {
 	for rowIdx, row := range b.data {
 		for colIdx := range row {
 			if b.data[rowIdx][colIdx] == 0 {
@@ -109,7 +100,7 @@ func (b *board) GetPreviousCell(row, col int) (int, int) {
 	return row-1, 8
 }
 
-func (b *board) Empty() {
+func (b *board) Reset() {
 	b.iterations = 0
 	for r, row := range b.data {
 		for c := range row {
@@ -156,10 +147,10 @@ func (b *board) WriteBoardsToFile(n int, filename string) {
 	file, _ := os.Create(filename)
 	defer file.Close()
 	for i := 0; i < n; i++ {
-		b.Fill()
+		b.FillRandom()
 		file.WriteString(fmt.Sprintf("%s\n", b.GetAsString()))
 		fmt.Printf("|")
-		b.Empty()
+		b.Reset()
 	}
 	file.Sync()
 }

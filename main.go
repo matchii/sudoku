@@ -18,7 +18,7 @@ func main() {
 	if len(os.Args) > 1 {
 		number, _ = strconv.Atoi(os.Args[1])
 	} else {
-		b.Fill()
+		b.FillRandom()
 		b.Print()
 		os.Exit(0)
 	}
@@ -36,6 +36,10 @@ func NewBoard() board {
 	for i := 0; i <= 8; i++ {
 		data[i]  = make([]int, 9)
 	}
-	b := board{data, nil, 0}
+	mug := make([][]intSlice, 9)
+	for i := 0; i <= 8; i++ {
+		mug[i] = make([]intSlice, 9)
+	}
+	b := board{data, mug, 0}
 	return b
 }
