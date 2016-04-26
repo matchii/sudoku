@@ -126,8 +126,6 @@ func (b *board) Print() {
 		}
 		tm.Println()
 	}
-	tm.Println()
-	tm.Printf("Board generated in %d iterations", b.iterations)
 	tm.Flush()
 }
 
@@ -153,4 +151,14 @@ func (b *board) WriteBoardsToFile(n int, filename string) {
 		b.Reset()
 	}
 	file.Sync()
+}
+
+func (b *board) FillFromString(s string) {
+	digits := strings.Split(s, "")
+	for rIndex, row := range b.data {
+		for cIndex, _ := range row {
+			n, _ := strconv.Atoi(digits[9 * rIndex + cIndex])
+			b.data[rIndex][cIndex] = n
+		}
+	}
 }

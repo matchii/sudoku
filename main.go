@@ -6,29 +6,59 @@ import (
 	"strconv"
 )
 
-// Parameters are:
-//	- number of boards to generate
-//	- file to store them, default "sudoku.txt"
+// Usage:
 //
-// If called without parameters, print one board and exit.
+//		sudoku gen <n> <filename>
+//
+// Generates n boards and saves them to file filename
+//
+//		sudoku read <filename>
+//
+// Reads first board from file <filename> and displays it as a grid
+//
+// If called without parameters, print one random board and exit.
 func main() {
-	b := NewBoard()
-	var number int
-	var filename string
-	if len(os.Args) > 1 {
-		number, _ = strconv.Atoi(os.Args[1])
-	} else {
+	if len(os.Args) == 1 {
+		b := NewBoard()
 		b.FillRandom()
 		b.Print()
 		os.Exit(0)
 	}
+	if os.Args[1] == "gen" {
+		GenerateToFile()
+		os.Exit(0)
+	}
+	if os.Args[1] == "read" {
+		PrintFromFile()
+		os.Exit(0)
+	}
+}
+
+func GenerateToFile() {
+	b := NewBoard()
+	number := 1
+	filename := "sudoku.txt"
 	if len(os.Args) > 2 {
-		filename = os.Args[2]
-	} else {
-		filename = "sudoku.txt"
+		number, _ = strconv.Atoi(os.Args[2])
+	}
+	if len(os.Args) > 3 {
+		filename = os.Args[3]
 	}
 	b.WriteBoardsToFile(number, filename)
 	fmt.Printf("\n%d board(s) generated and stored in file %s\n", number, filename)
+}
+
+func PrintFromFile() {
+	filename := "sudoku.txt"
+	if len(os.Args) > 2 {
+		filename = os.Args[2]
+	}
+	data := make([]byte, 81)
+	f, _ := os.Open(filename)
+	count, _ := f.Read(data)
+	b := NewBoard()
+	b.FillFromString(string(data[:count]))
+	b.Print()
 }
 
 func NewBoard() board {
