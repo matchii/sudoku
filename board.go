@@ -113,25 +113,6 @@ func (b *board) Reset() {
 	}
 }
 
-func (b *board) Print() {
-	tm.Clear()
-	tm.MoveCursor(1, 1)
-	for l, line := range b.data {
-		if l % 3 == 0 {
-			tm.Println()
-		}
-		for c, _ := range line {
-			if c % 3 == 0 {
-				tm.Printf("  %d", b.data[l][c])
-			} else {
-				tm.Printf(" %d", b.data[l][c])
-			}
-		}
-		tm.Println()
-	}
-	tm.Flush()
-}
-
 // GetAsString returns board as 81-chars long string of digits
 func (b *board) GetAsString() string {
 	var result [81]string
@@ -163,5 +144,44 @@ func (b *board) FillFromString(s string) {
 			n, _ := strconv.Atoi(digits[9 * rIndex + cIndex])
 			b.data[rIndex][cIndex] = n
 		}
+	}
+}
+
+//// Printing
+
+func (b *board) PrintFull() {
+	b.Print(b.data)
+}
+
+func (b *board) PrintPartial() {
+	b.Print(b.partial)
+}
+
+func (b *board) Print(grid [][]int) {
+	tm.Clear()
+	tm.MoveCursor(1, 1)
+	for l, line := range grid {
+		if l % 3 == 0 {
+			tm.Println()
+		}
+		for c, _ := range line {
+			b.PrintCell(grid, l, c)
+		}
+		tm.Println()
+	}
+	tm.Flush()
+}
+
+func (b *board) PrintCell(grid [][]int, r, c int) {
+	var cell string
+	if grid[r][c] == 0 {
+		cell = fmt.Sprintf(" ")
+	} else {
+		cell = fmt.Sprintf("%d", grid[r][c])
+	}
+	if c % 3 == 0 {
+		tm.Printf("  %s", cell)
+	} else {
+		tm.Printf(" %s", cell)
 	}
 }

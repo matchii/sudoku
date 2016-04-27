@@ -21,7 +21,7 @@ func main() {
 	if len(os.Args) == 1 {
 		b := NewBoard()
 		b.FillRandom()
-		b.Print()
+		b.PrintFull()
 		os.Exit(0)
 	}
 	if os.Args[1] == "gen" {
@@ -58,7 +58,7 @@ func PrintFromFile() {
 	count, _ := f.Read(data)
 	b := NewBoard()
 	b.FillFromString(string(data[:count]))
-	b.Print()
+	b.PrintFull()
 }
 
 func NewBoard() board {
