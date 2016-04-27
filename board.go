@@ -18,6 +18,9 @@ type board struct {
 	// Storage for temporarly used digits
 	mug [][]intSlice
 
+	// Partially filled board
+	partial [][]int
+
 	// In how many iterations board was filled
 	iterations int
 }

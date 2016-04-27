@@ -70,6 +70,10 @@ func NewBoard() board {
 	for i := 0; i <= 8; i++ {
 		mug[i] = make([]intSlice, 9)
 	}
-	b := board{data, mug, 0}
+	partial := make([][]int, 9)
+	for i := 0; i <= 8; i++ {
+		partial[i] = make([]int, 9)
+	}
+	b := board{data, mug, partial, 0}
 	return b
 }
