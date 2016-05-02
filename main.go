@@ -53,12 +53,13 @@ func PrintFromFile() {
 	if len(os.Args) > 2 {
 		filename = os.Args[2]
 	}
-	data := make([]byte, 81)
+	data := make([]byte, 162)
 	f, _ := os.Open(filename)
 	count, _ := f.Read(data)
 	b := NewBoard()
 	b.FillFromString(string(data[:count]))
 	b.PrintFull()
+	b.PrintPartial()
 }
 
 func NewBoard() board {

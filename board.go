@@ -31,6 +31,7 @@ func (b *board) FillRandom() bool {
 	for {
 		row, col = b.GetNextResetCell()
 		if row == -1 {
+			b.CopyDataToPartial()
 			return true // no empty cells, done
 		}
 		// build list of legal digits for current cell
@@ -113,18 +114,31 @@ func (b *board) Reset() {
 	}
 }
 
+func (b *board) CopyDataToPartial() {
+	for rIndex, row := range b.data {
+		for cIndex, _ := range row {
+			b.partial[rIndex][cIndex] = b.data[rIndex][cIndex]
+		}
+	}
+}
+
 // GetAsString returns board as 81-chars long string of digits
 func (b *board) GetAsString() string {
-	var result [81]string
+	var result [162]string
 	for rIndex, row := range b.data {
 		for cIndex, value := range row {
 			result[9 * rIndex + cIndex] = strconv.Itoa(value)
 		}
 	}
+	for rIndex, row := range b.partial {
+		for cIndex, value := range row {
+			result[9 * rIndex + cIndex + 81] = strconv.Itoa(value)
+		}
+	}
 	return fmt.Sprintf("%s", strings.Join(result[:], ""))
 }
 
-// WriteBoardsToFile saves given number of boards in file as 81-chars long strings
+// WriteBoardsToFile saves given number of boards in file as 162-chars long strings
 func (b *board) WriteBoardsToFile(n int, filename string) {
 	file, _ := os.Create(filename)
 	defer file.Close()
@@ -143,6 +157,12 @@ func (b *board) FillFromString(s string) {
 		for cIndex, _ := range row {
 			n, _ := strconv.Atoi(digits[9 * rIndex + cIndex])
 			b.data[rIndex][cIndex] = n
+		}
+	}
+	for rIndex, row := range b.partial {
+		for cIndex, _ := range row {
+			n, _ := strconv.Atoi(digits[9 * rIndex + cIndex + 81])
+			b.partial[rIndex][cIndex] = n
 		}
 	}
 }
