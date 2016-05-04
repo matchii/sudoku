@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 	tm "github.com/buger/goterm"
 )
 
@@ -144,6 +146,7 @@ func (b *board) WriteBoardsToFile(n int, filename string) {
 	defer file.Close()
 	for i := 0; i < n; i++ {
 		b.FillRandom()
+		b.FindPartialSolution()
 		file.WriteString(fmt.Sprintf("%s\n", b.GetAsString()))
 		fmt.Printf("|")
 		b.Reset()
@@ -165,6 +168,32 @@ func (b *board) FillFromString(s string) {
 			b.partial[rIndex][cIndex] = n
 		}
 	}
+}
+
+func (b *board) FindPartialSolution() {
+	for i := 0; i < 10; i++ {
+		b.ClearRandomCell()
+	}
+}
+
+func (b *board) ClearRandomCell() {
+	r, c := b.GetRandomCell(true)
+	b.partial[r][c] = 0
+}
+
+// If nonZero = true, return cell not empty on partial
+func (b *board) GetRandomCell(nonZero bool) (int, int) {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	var row, col int
+	for {
+		row = r.Intn(9)
+		col = r.Intn(9)
+		if nonZero && b.partial[row][col] == 0 {
+			continue
+		}
+		break
+	}
+	return row, col
 }
 
 //// Printing
