@@ -97,7 +97,7 @@ func TestEmpty(t *testing.T) {
 	b.data[2][2] = 1
 	b.data[5][5] = 1
 	b.data[7][7] = 1
-	b.Empty()
+	b.Reset()
 	assert.Equal(t, 0, b.data[0][0])
 	assert.Equal(t, 0, b.data[2][2])
 	assert.Equal(t, 0, b.data[5][5])

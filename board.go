@@ -31,7 +31,7 @@ func (b *board) FillRandom() bool {
 	var digits intSlice
 	var prevRow, prevCol, row, col int
 	for {
-		row, col = b.GetNextResetCell()
+		row, col = b.GetNextEmptyCell()
 		if row == -1 {
 			b.CopyDataToPartial()
 			return true // no empty cells, done
@@ -83,9 +83,9 @@ func (b *board) GetAvailable(row int, col int) intSlice {
 	return tmp
 }
 
-// GetNextResetCell returns index (row, col) of the first empty cell,
+// GetNextEmptyCell returns index (row, col) of the first empty cell,
 // or (-1, -1) if all cells are filled.
-func (b *board) GetNextResetCell() (int, int) {
+func (b *board) GetNextEmptyCell() (int, int) {
 	for rowIdx, row := range b.data {
 		for colIdx := range row {
 			if b.data[rowIdx][colIdx] == 0 {
