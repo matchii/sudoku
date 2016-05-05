@@ -2,16 +2,16 @@ package main
 
 import (
 	"fmt"
+	tm "github.com/buger/goterm"
 	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-	tm "github.com/buger/goterm"
 )
 
-// Reset execution after this number of iterations is reached
-const ITERATIONS_LIMIT int = 1000000
+// IterationsLimit Reset execution after this number of iterations is reached
+const IterationsLimit int = 1000000
 
 type board struct {
 	// Digits in cells
@@ -54,7 +54,7 @@ func (b *board) FillRandom() bool {
 		}
 		b.data[row][col] = digits.randomDigit()
 		b.iterations++
-		if b.iterations > ITERATIONS_LIMIT {
+		if b.iterations > IterationsLimit {
 			fmt.Printf(".")
 			b.Reset()
 		}
@@ -101,9 +101,9 @@ func (b *board) GetPreviousCell(row, col int) (int, int) {
 		return -1, -1
 	}
 	if col > 0 {
-		return row, col-1
+		return row, col - 1
 	}
-	return row-1, 8
+	return row - 1, 8
 }
 
 func (b *board) Reset() {
@@ -118,7 +118,7 @@ func (b *board) Reset() {
 
 func (b *board) CopyDataToPartial() {
 	for rIndex, row := range b.data {
-		for cIndex, _ := range row {
+		for cIndex := range row {
 			b.partial[rIndex][cIndex] = b.data[rIndex][cIndex]
 		}
 	}
@@ -129,19 +129,19 @@ func (b *board) GetAsString() string {
 	var result [162]string
 	for rIndex, row := range b.data {
 		for cIndex, value := range row {
-			result[9 * rIndex + cIndex] = strconv.Itoa(value)
+			result[9*rIndex+cIndex] = strconv.Itoa(value)
 		}
 	}
 	for rIndex, row := range b.partial {
 		for cIndex, value := range row {
-			result[9 * rIndex + cIndex + 81] = strconv.Itoa(value)
+			result[9*rIndex+cIndex+81] = strconv.Itoa(value)
 		}
 	}
 	return fmt.Sprintf("%s", strings.Join(result[:], ""))
 }
 
 // WriteBoardsToFile saves given number of boards in file as 162-chars long strings
-func (b *board) WriteBoardsToFile(n int, filename string) {
+func (b *board) WriteBoardsToFile(n int, filename string) error {
 	file, _ := os.Create(filename)
 	defer file.Close()
 	for i := 0; i < n; i++ {
@@ -151,27 +151,27 @@ func (b *board) WriteBoardsToFile(n int, filename string) {
 		fmt.Printf("|")
 		b.Reset()
 	}
-	file.Sync()
+	return file.Sync()
 }
 
 func (b *board) FillFromString(s string) {
 	digits := strings.Split(s, "")
 	for rIndex, row := range b.data {
-		for cIndex, _ := range row {
-			n, _ := strconv.Atoi(digits[9 * rIndex + cIndex])
+		for cIndex := range row {
+			n, _ := strconv.Atoi(digits[9*rIndex+cIndex])
 			b.data[rIndex][cIndex] = n
 		}
 	}
 	for rIndex, row := range b.partial {
-		for cIndex, _ := range row {
-			n, _ := strconv.Atoi(digits[9 * rIndex + cIndex + 81])
+		for cIndex := range row {
+			n, _ := strconv.Atoi(digits[9*rIndex+cIndex+81])
 			b.partial[rIndex][cIndex] = n
 		}
 	}
 }
 
 func (b *board) FindPartialSolution() {
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 40; i++ {
 		b.ClearRandomCell()
 	}
 }
@@ -210,10 +210,10 @@ func (b *board) Print(grid [][]int) {
 	tm.Clear()
 	tm.MoveCursor(1, 1)
 	for l, line := range grid {
-		if l % 3 == 0 {
+		if l%3 == 0 {
 			tm.Println()
 		}
-		for c, _ := range line {
+		for c := range line {
 			b.PrintCell(grid, l, c)
 		}
 		tm.Println()
@@ -228,7 +228,7 @@ func (b *board) PrintCell(grid [][]int, r, c int) {
 	} else {
 		cell = fmt.Sprintf("%d", grid[r][c])
 	}
-	if c % 3 == 0 {
+	if c%3 == 0 {
 		tm.Printf("  %s", cell)
 	} else {
 		tm.Printf(" %s", cell)

@@ -6,7 +6,7 @@ import (
 )
 
 func TestGetAvailable(t *testing.T) {
-	b := NewBoard()
+	b := newBoard()
 	assert.True(t,
 		IntSlicesEqual(b.GetAvailable(0, 0), intSlice{1, 2, 3, 4, 5, 6, 7, 8, 9}),
 		"C1: All should be available")
@@ -40,7 +40,7 @@ func TestGetAvailable(t *testing.T) {
 }
 
 func TestGetNextEmptyCell(t *testing.T) {
-	b := NewBoard()
+	b := newBoard()
 	var row, col int
 	// empty board, expect 0, 0
 	row, col = b.GetNextEmptyCell()
@@ -77,7 +77,7 @@ func TestGetNextEmptyCell(t *testing.T) {
 }
 
 func TestGetPreviousCell(t *testing.T) {
-	b := NewBoard()
+	b := newBoard()
 	var row, col int
 
 	row, col = b.GetPreviousCell(0, 0)
@@ -92,7 +92,7 @@ func TestGetPreviousCell(t *testing.T) {
 }
 
 func TestEmpty(t *testing.T) {
-	b := NewBoard()
+	b := newBoard()
 	b.data[0][0] = 1
 	b.data[2][2] = 1
 	b.data[5][5] = 1

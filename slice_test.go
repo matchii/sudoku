@@ -6,18 +6,18 @@ import (
 )
 
 type TestCaseInt struct {
-	slice	 intSlice
-	value	 int
+	slice    intSlice
+	value    int
 	expected int
 }
 
 type TestCaseBool struct {
-	slice	 intSlice
-	value	 int
+	slice    intSlice
+	value    int
 	expected bool
 }
 
-var cases_removeValue = []TestCaseInt{
+var casesRemoveValue = []TestCaseInt{
 	{intSlice{}, 1, 0},
 	{intSlice{5}, 5, 0},
 	{intSlice{1}, 2, 1},
@@ -28,14 +28,14 @@ var cases_removeValue = []TestCaseInt{
 }
 
 func TestRemovingValue(t *testing.T) {
-	for _, data := range cases_removeValue {
+	for _, data := range casesRemoveValue {
 		data.slice.removeValue(data.value)
 		assert.False(t, len(data.slice) != data.expected)
 		assert.False(t, data.slice.indexOf(data.value) > -1)
 	}
 }
 
-var cases_indexOf = []TestCaseInt{
+var casesIndexOf = []TestCaseInt{
 	{intSlice{}, 1, -1},
 	{intSlice{1}, 1, 0},
 	{intSlice{1, 2}, 1, 0},
@@ -45,12 +45,12 @@ var cases_indexOf = []TestCaseInt{
 }
 
 func TestGettingIndex(t *testing.T) {
-	for _, data := range cases_indexOf {
+	for _, data := range casesIndexOf {
 		assert.Equal(t, data.expected, data.slice.indexOf(data.value))
 	}
 }
 
-var cases_sum = []TestCaseInt{
+var casesSum = []TestCaseInt{
 	{intSlice{}, 0, 0},
 	{intSlice{0}, 0, 0},
 	{intSlice{1}, 0, 1},
@@ -59,12 +59,12 @@ var cases_sum = []TestCaseInt{
 }
 
 func TestSum(t *testing.T) {
-	for _, data := range cases_sum {
+	for _, data := range casesSum {
 		assert.Equal(t, data.expected, data.slice.sum())
 	}
 }
 
-var cases_contains = []TestCaseBool{
+var casesContains = []TestCaseBool{
 	{intSlice{}, 1, false},
 	{intSlice{1}, 1, true},
 	{intSlice{1}, 2, false},
@@ -74,7 +74,7 @@ var cases_contains = []TestCaseBool{
 }
 
 func TestContains(t *testing.T) {
-	for _, data := range cases_contains {
+	for _, data := range casesContains {
 		assert.Equal(t, data.expected, data.slice.contains(data.value))
 	}
 }

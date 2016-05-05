@@ -19,23 +19,25 @@ import (
 // If called without parameters, print one random board and exit.
 func main() {
 	if len(os.Args) == 1 {
-		b := NewBoard()
+		b := newBoard()
 		b.FillRandom()
+		b.FindPartialSolution()
 		b.PrintFull()
+		b.PrintPartial()
 		os.Exit(0)
 	}
 	if os.Args[1] == "gen" {
-		GenerateToFile()
+		generateToFile()
 		os.Exit(0)
 	}
 	if os.Args[1] == "read" {
-		PrintFromFile()
+		printFromFile()
 		os.Exit(0)
 	}
 }
 
-func GenerateToFile() {
-	b := NewBoard()
+func generateToFile() {
+	b := newBoard()
 	number := 1
 	filename := "sudoku.txt"
 	if len(os.Args) > 2 {
@@ -44,11 +46,14 @@ func GenerateToFile() {
 	if len(os.Args) > 3 {
 		filename = os.Args[3]
 	}
-	b.WriteBoardsToFile(number, filename)
-	fmt.Printf("\n%d board(s) generated and stored in file %s\n", number, filename)
+	if writeError := b.WriteBoardsToFile(number, filename); writeError != nil {
+		fmt.Printf("\nError when writing to file: %s\n", writeError)
+	} else {
+		fmt.Printf("\n%d board(s) generated and stored in file %s\n", number, filename)
+	}
 }
 
-func PrintFromFile() {
+func printFromFile() {
 	filename := "sudoku.txt"
 	if len(os.Args) > 2 {
 		filename = os.Args[2]
@@ -56,16 +61,16 @@ func PrintFromFile() {
 	data := make([]byte, 162)
 	f, _ := os.Open(filename)
 	count, _ := f.Read(data)
-	b := NewBoard()
+	b := newBoard()
 	b.FillFromString(string(data[:count]))
 	b.PrintFull()
 	b.PrintPartial()
 }
 
-func NewBoard() board {
+func newBoard() board {
 	data := make([][]int, 9)
 	for i := 0; i <= 8; i++ {
-		data[i]  = make([]int, 9)
+		data[i] = make([]int, 9)
 	}
 	mug := make([][]intSlice, 9)
 	for i := 0; i <= 8; i++ {
