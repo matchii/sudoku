@@ -58,7 +58,6 @@ func (b *board) FillRandom() bool {
 		b.data[row][col] = digits.randomDigit()
 		b.iterations++
 		if b.iterations > IterationsLimit {
-			fmt.Printf(".")
 			b.Reset()
 		}
 	}
@@ -137,6 +136,14 @@ func (b *board) CopyDataToPartial() {
 	}
 }
 
+func (b *board) CopyPartialToData() {
+	for rIndex, row := range b.partial {
+		for cIndex := range row {
+			b.data[rIndex][cIndex] = b.partial[rIndex][cIndex]
+		}
+	}
+}
+
 // GetAsString returns board as 81-chars long string of digits
 func (b *board) GetAsString() string {
 	var result [162]string
@@ -208,6 +215,12 @@ func (b *board) GetRandomCell(nonZero bool) (int, int) {
 		break
 	}
 	return row, col
+}
+
+func (b *board) ResolvePartial() {
+	b.Reset()
+	b.CopyPartialToData()
+	b.FillRandom()
 }
 
 //// Printing

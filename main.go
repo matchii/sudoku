@@ -63,6 +63,8 @@ func printFromFile() {
 	count, _ := f.Read(data)
 	b := newBoard()
 	b.FillFromString(string(data[:count]))
+	b.PrintPartial()
+	b.ResolvePartial()
 	b.PrintFull()
 	b.PrintPartial()
 }
