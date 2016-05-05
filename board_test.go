@@ -80,13 +80,26 @@ func TestGetPreviousCell(t *testing.T) {
 	b := newBoard()
 	var row, col int
 
+	// First cell, there is no previous one
 	row, col = b.GetPreviousCell(0, 0)
 	assert.Equal(t, -1, row)
 	assert.Equal(t, -1, col)
+	// Previous in the same row
 	row, col = b.GetPreviousCell(0, 5)
 	assert.Equal(t, 0, row)
 	assert.Equal(t, 4, col)
+	// Previous non-fixed in the same row
+	b.fixed[0][4] = true
+	row, col = b.GetPreviousCell(0, 5)
+	assert.Equal(t, 0, row)
+	assert.Equal(t, 3, col)
+	// Last from previous row
 	row, col = b.GetPreviousCell(8, 0)
+	assert.Equal(t, 7, row)
+	assert.Equal(t, 8, col)
+	// Last non-fixed from previous row
+	b.fixed[8][0] = true
+	row, col = b.GetPreviousCell(8, 1)
 	assert.Equal(t, 7, row)
 	assert.Equal(t, 8, col)
 }

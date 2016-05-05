@@ -23,6 +23,9 @@ type board struct {
 	// Partially filled board
 	partial [][]int
 
+	// True if cell cannot be changed
+	fixed [][]bool
+
 	// In how many iterations board was filled
 	iterations int
 }
@@ -100,10 +103,20 @@ func (b *board) GetPreviousCell(row, col int) (int, int) {
 	if row == 0 && col == 0 {
 		return -1, -1
 	}
-	if col > 0 {
-		return row, col - 1
+	for {
+		if col > 0 {
+			if b.fixed[row][col-1] {
+				col = col - 1
+				continue
+			}
+			return row, col - 1
+		}
+		row = row - 1
+		col = 8
+		if !b.fixed[row][col] {
+			return row, col
+		}
 	}
-	return row - 1, 8
 }
 
 func (b *board) Reset() {
@@ -166,6 +179,7 @@ func (b *board) FillFromString(s string) {
 		for cIndex := range row {
 			n, _ := strconv.Atoi(digits[9*rIndex+cIndex+81])
 			b.partial[rIndex][cIndex] = n
+			b.fixed[rIndex][cIndex] = n != 0
 		}
 	}
 }

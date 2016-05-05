@@ -80,6 +80,10 @@ func newBoard() board {
 	for i := 0; i <= 8; i++ {
 		partial[i] = make([]int, 9)
 	}
-	b := board{data, mug, partial, 0}
+	fixed := make([][]bool, 9)
+	for i := 0; i <= 8; i++ {
+		fixed[i] = make([]bool, 9)
+	}
+	b := board{data, mug, partial, fixed, 0}
 	return b
 }
